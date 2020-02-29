@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Data.Enumeration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Models.Flights
 {
-    public class FlightsCreateViewModel
+    public class FlightsDetailsViewModel
     {
+        public int FlightId { get; set; }
+
+        public int TicketNum { get; set; }
 
         public string LocationFrom { get; set; }
 
@@ -25,5 +29,6 @@ namespace Web.Models.Flights
         public int RegularSeats { get; set; }
 
         public int BusinessSeats { get; set; }
+
     }
 }

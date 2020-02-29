@@ -92,7 +92,64 @@ namespace Web.Controllers
         // GET: Flights/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var flight = _context.Flights.Find(id);
+            FlightsDetailsViewModel model = new FlightsDetailsViewModel()
+            {
+                FlightId = flight.Id,
+                LocationFrom = flight.LocationFrom,
+                LocationTo = flight.LocationTo,
+                DepartureTime = flight.DepartureTime,
+                LandingTime = flight.LandingTime,
+                PlaneType = flight.PlaneType,
+                PlaneNumber = flight.PlaneNumber,
+                PilotName = flight.PilotName,
+                RegularSeats = flight.RegularSeats,
+                BusinessSeats = flight.BusinessSeats
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reserve(FlightsDetailsViewModel createModel)
+        {
+            FlightsReserveViewModel model = new FlightsReserveViewModel()
+            {
+                TicketNum = createModel.TicketNum,
+                FlightId = createModel.FlightId
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirm(FlightsReserveViewModel createModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Reservation reservation = new Reservation()
+                {
+                    FlightId = createModel.FlightId,
+                    Passangers = new List<Passanger>()
+                };
+                foreach (var passangerViewModel in createModel.Passangers)
+                {
+                    Passanger passanger = new Passanger
+                    {
+                        FirstName = passangerViewModel.FirstName,
+                        MiddleName = passangerViewModel.MiddleName,
+                        LastName = passangerViewModel.LastName,
+                        UCN = passangerViewModel.UCN,
+                        PhoneNumber = passangerViewModel.PhoneNumber,
+                        Nationality = passangerViewModel.Nationality,
+                        TicketType = passangerViewModel.TicketType
+                    };
+                    reservation.Passangers.Add(passanger);
+                }
+                _context.Reservations.Add(reservation);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(UserList));
         }
 
 

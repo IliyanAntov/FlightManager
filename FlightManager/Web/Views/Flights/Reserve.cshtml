@@ -1,0 +1,66 @@
+﻿@model Web.Models.Flights.FlightsReserveViewModel
+
+@{
+    ViewData["Title"] = "Reserve";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Reserve</h1>
+
+<h4>FlightsReserveViewModel</h4>
+<hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Confirm">
+                <input asp-for="FlightId" type="hidden" value="@Model.FlightId" />
+                @for (int i = 0; i < Model.TicketNum; i++)
+                {
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].FirstName" class="control-label"></label>
+                        <input asp-for="Passangers[i].FirstName" class="form-control" />
+                        <span asp-validation-for="Passangers[i].FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].MiddleName" class="control-label"></label>
+                        <input asp-for="Passangers[i].MiddleName" class="form-control" />
+                        <span asp-validation-for="Passangers[i].MiddleName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].LastName" class="control-label"></label>
+                        <input asp-for="Passangers[i].LastName" class="form-control" />
+                        <span asp-validation-for="Passangers[i].LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].UCN" class="control-label"></label>
+                        <input asp-for="Passangers[i].UCN" class="form-control" />
+                        <span asp-validation-for="Passangers[i].UCN" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].PhoneNumber" class="control-label"></label>
+                        <input asp-for="Passangers[i].PhoneNumber" class="form-control" />
+                        <span asp-validation-for="Passangers[i].PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].Nationality" class="control-label"></label>
+                        <input asp-for="Passangers[i].Nationality" class="form-control" />
+                        <span asp-validation-for="Passangers[i].Nationality" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passangers[i].TicketType" class="control-label"></label>
+                        <input asp-for="Passangers[i].TicketType" class="form-control" />
+                        <span asp-validation-for="Passangers[i].TicketType" class="text-danger"></span>
+                    </div>
+                }
+                <div class="form-group">
+                    <input type="submit" value="Confirm" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

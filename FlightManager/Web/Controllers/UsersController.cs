@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Data.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ namespace Web.Controllers
         }
 
         // GET: Users
+        [Authorize(Roles="Admin")]
         public ActionResult List(UsersListViewModel model)
         {
             model.Pager ??= new PagerViewModel();

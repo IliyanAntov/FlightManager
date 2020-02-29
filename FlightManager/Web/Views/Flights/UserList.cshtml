@@ -1,0 +1,79 @@
+﻿@using Web.Models.Flights
+@model Web.Models.Flights.FlightsUserListViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Source
+            </th>
+            <th>
+                Destination
+            </th>
+            <th>
+                Departure time
+            </th>
+            <th>
+                Duration
+            </th>
+            <th>
+                Plane type
+            </th>
+            <th>
+                Regular seats
+            </th>
+            <th>
+                Business seats
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationFrom)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationTo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartureTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration.Hours) hrs
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlaneType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegularSeats)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BusinessSeats)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+        {
+            <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+                <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+</table>

@@ -56,9 +56,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Role)
             </td>
+
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Email">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Email">Delete</a>
+                @if (item.Role != "Admin")
+                {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <a asp-action="Delete"asp-route-id="@item.Id">Delete</a>
+                 }
             </td>
         </tr>
         }

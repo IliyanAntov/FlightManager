@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Data.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,14 @@ namespace Web.Controllers
 
         private const int PageSize = 10;
         private readonly ApplicationDbContext _context;
-        public UsersController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public UsersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: Users
@@ -30,10 +36,11 @@ namespace Web.Controllers
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
 
             List<UsersViewModel> items = new List<UsersViewModel>();
-            foreach (var item in _context.Users.ToList())
+            foreach (var item in _context.Users.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
             {
                 var viewModel = new UsersViewModel()
                 {
+                    Id = item.Id,
                     Username = item.UserName,
                     Email = item.Email,
                     FirstName = item.FirstName,
@@ -42,14 +49,15 @@ namespace Web.Controllers
                     Address = item.Address,
                     PhoneNumber = item.PhoneNumber
                 };
-                var roleId = _context.UserRoles.Where(x => x.UserId == item.Id).FirstOrDefault().RoleId;
-                viewModel.Role = _context.Roles.Where(x => x.Id == roleId).FirstOrDefault().Name;
+
+                var role = _userManager.GetRolesAsync(item).Result.FirstOrDefault();
+                viewModel.Role = role;
 
 
                 items.Add(viewModel);
             }
 
-            items.ToList();
+            items = items.OrderBy(x => x.Username).ToList();
 
 
             model.Items = items;
@@ -58,62 +66,106 @@ namespace Web.Controllers
             return View(model);
         }
 
-        // GET: Users/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: Users/Create
         public ActionResult Create()
         {
-            return View();
+            UsersCreateViewModel model = new UsersCreateViewModel();
+            return View(model);
         }
 
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(UsersCreateViewModel createModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                ApplicationUser user = new ApplicationUser
+                {
+                    UserName = createModel.Username,
+                    Email = createModel.Email,
+                    FirstName = createModel.FirstName,
+                    LastName = createModel.LastName,
+                    UCN = createModel.UCN,
+                    Address = createModel.Address,
+                    PhoneNumber = createModel.PhoneNumber
 
-                return RedirectToAction(nameof(Index));
+                };
+                var createUser = _userManager.CreateAsync(user, createModel.Password).Result;
+                if (createUser.Succeeded)
+                {
+                    _userManager.AddToRoleAsync(user, "Employee").Wait();
+                }
+                _context.SaveChanges();
+                return RedirectToAction(nameof(List));
+        
             }
-            catch
-            {
-                return View();
-            }
+            return View(createModel);
         }
 
         // GET: Users/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
+            ApplicationUser user = _context.Users.Find(id);
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            UsersEditViewModel model = new UsersEditViewModel
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UCN = user.UCN,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber
+            };
+
+            return View(model);
         }
 
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(UsersEditViewModel editModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
+                ApplicationUser user = _userManager.FindByIdAsync(editModel.Id).Result;
+                user.UserName = editModel.Username;
+                user.Email = editModel.Email;
+                user.FirstName = editModel.FirstName;
+                user.LastName = editModel.LastName;
+                user.UCN = editModel.UCN;
+                user.Address = editModel.Address;
+                user.PhoneNumber = editModel.PhoneNumber;
 
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _userManager.UpdateAsync(user).Wait();
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    
+                }
+
+                return RedirectToAction(nameof(List));
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(editModel);
+
         }
 
         // GET: Users/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
-            return View();
+            ApplicationUser user = _userManager.FindByIdAsync(id).Result;
+            _userManager.DeleteAsync(user).Wait();
+            return RedirectToAction(nameof(List));
         }
 
         // POST: Users/Delete/5

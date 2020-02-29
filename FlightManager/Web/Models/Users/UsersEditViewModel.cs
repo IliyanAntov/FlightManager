@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Web.Models.Users
 {
-    public class UsersViewModel
+    public class UsersEditViewModel
     {
+
         public string Id { get; set; }
 
         public string Username { get; set; }
@@ -22,8 +23,6 @@ namespace Web.Models.Users
         public string Address { get; set; }
 
         public string PhoneNumber { get; set; }
-
-        public string Role { get; set; }
 
     }
 }

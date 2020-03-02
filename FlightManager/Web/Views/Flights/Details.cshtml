@@ -11,58 +11,58 @@
     <h4>FlightsDetailsViewModel</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LocationFrom)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LocationFrom)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LocationTo)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LocationTo)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DepartureTime)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DepartureTime)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LandingTime)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LandingTime)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PlaneType)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PlaneType)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PlaneNumber)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PlaneNumber)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PilotName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PilotName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.RegularSeats)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.RegularSeats)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.BusinessSeats)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.BusinessSeats)
         </dd>
     </dl>
@@ -71,12 +71,12 @@
 <div>
     <a asp-action="UserList">Back to List</a>
 </div>
-
+<div style="margin-top:25px"></div>
 
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Reserve">
+        <form asp-action="Details">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TicketNum" class="control-label"></label>
@@ -84,9 +84,22 @@
                 <span asp-validation-for="TicketNum" class="text-danger"></span>
             </div>
             <input asp-for="FlightId" type="hidden" value="@Model.FlightId" />
+            <input asp-for="LocationFrom" type="hidden" value="@Model.LocationFrom" />
+            <input asp-for="LocationTo" type="hidden" value="@Model.LocationTo" />
+            <input asp-for="DepartureTime" type="hidden" value="@Model.DepartureTime" />
+            <input asp-for="LandingTime" type="hidden" value="@Model.LandingTime" />
+            <input asp-for="PlaneType" type="hidden" value="@Model.PlaneType" />
+            <input asp-for="PlaneNumber" type="hidden" value="@Model.PlaneNumber" />
+            <input asp-for="PilotName" type="hidden" value="@Model.PilotName" />
+            <input asp-for="RegularSeats" type="hidden" value="@Model.RegularSeats" />
+            <input asp-for="BusinessSeats" type="hidden" value="@Model.BusinessSeats" />
             <div class="form-group">
                 <input type="submit" value="Reserve" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

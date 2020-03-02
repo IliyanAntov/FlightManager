@@ -111,15 +111,28 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Reserve(FlightsDetailsViewModel createModel)
+        public ActionResult Details(FlightsDetailsViewModel createModel)
         {
-            FlightsReserveViewModel model = new FlightsReserveViewModel()
+            if (!ModelState.IsValid)
             {
-                TicketNum = createModel.TicketNum,
-                FlightId = createModel.FlightId
-            };
+                return View(createModel);
+            }
+            else
+            {
+                FlightsReserveViewModel model = new FlightsReserveViewModel
+                {
+                    FlightId = createModel.FlightId,
+                    TicketNum = createModel.TicketNum
+                };
+                return RedirectToAction("Reserve", model);
+            }
+        }
+
+        public ActionResult Reserve(FlightsReserveViewModel model)
+        {
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -127,6 +140,7 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 Reservation reservation = new Reservation()
                 {
                     FlightId = createModel.FlightId,

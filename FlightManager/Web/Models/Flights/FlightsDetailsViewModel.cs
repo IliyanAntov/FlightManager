@@ -1,8 +1,11 @@
 ﻿using Data.Enumeration;
+using ExpressiveAnnotations.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Attributes;
 
 namespace Web.Models.Flights
 {
@@ -10,6 +13,7 @@ namespace Web.Models.Flights
     {
         public int FlightId { get; set; }
 
+        [TicketNumAttribute("RegularSeats", "BusinessSeats")]
         public int TicketNum { get; set; }
 
         public string LocationFrom { get; set; }

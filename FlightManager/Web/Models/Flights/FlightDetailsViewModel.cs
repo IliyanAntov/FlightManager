@@ -9,7 +9,7 @@ using Web.Attributes;
 
 namespace Web.Models.Flights
 {
-    public class FlightsDetailsViewModel
+    public class FlightDetailsViewModel
     {
         public int FlightId { get; set; }
 

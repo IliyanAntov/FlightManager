@@ -7,10 +7,10 @@ using Web.Models.Users;
 
 namespace Web.Models.Flights
 {
-    public class FlightsAdminListViewModel
+    public class ReservationListViewModel
     {
         public PagerViewModel Pager { get; set; }
 
-        public ICollection<FlightsAdminViewModel> Items { get; set; }
+        public ICollection<ReservationDataViewModel> Items { get; set; }
     }
 }

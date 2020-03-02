@@ -1,5 +1,5 @@
 ﻿@using Data.Enumeration
-@model Web.Models.Flights.FlightsReserveViewModel
+@model Web.Models.Flights.ReserveViewModel
 
 @{
     ViewData["Title"] = "Reserve";
@@ -14,9 +14,14 @@
         <div class="col-md-4">
             <form asp-action="Confirm">
                 <input asp-for="FlightId" type="hidden" value="@Model.FlightId" />
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
                 @for (int i = 0; i < Model.TicketNum; i++)
                 {
-                    <h4>Passanger #@i</h4>
+                    <h4>Passanger #@(i + 1)</h4>
                     <div class="form-group">
                         <label asp-for="Passangers[i].FirstName" class="control-label"></label>
                         <input asp-for="Passangers[i].FirstName" class="form-control" />
@@ -49,7 +54,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Passangers[i].TicketType" class="control-label"></label>
-                        @Html.DropDownList("TicketType", Html.GetEnumSelectList<TicketTypeEnum>(), new { @class = "form-control" })
+                        @Html.DropDownListFor(m=> m.Passangers[i].TicketType, Html.GetEnumSelectList<TicketTypeEnum>(), new { @class = "form-control" })
                         <span asp-validation-for="Passangers[i].TicketType" class="text-danger"></span>
                     </div>
                 }

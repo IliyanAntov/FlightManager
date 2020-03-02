@@ -6,10 +6,10 @@ using Web.Models.Shared;
 
 namespace Web.Models.Flights
 {
-    public class FlightsUserListViewModel
+    public class UserListViewModel
     {
         public PagerViewModel Pager { get; set; }
 
-        public ICollection<FlightsUserViewModel> Items { get; set; }
+        public ICollection<FlightUserListViewModel> Items { get; set; }
     }
 }

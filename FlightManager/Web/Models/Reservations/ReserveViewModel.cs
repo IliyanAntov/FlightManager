@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Web.Models.Flights
 {
-    public class FlightsReserveViewModel
+    public class ReserveViewModel
     {
 
         public int FlightId { get; set; }
 
         public int TicketNum { get; set; }
+
+        public string Email { get; set; }
 
         public List<PassangerDataViewModel> Passangers { get; set; }
 

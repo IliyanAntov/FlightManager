@@ -1,5 +1,5 @@
 ﻿@using Web.Models.Flights
-@model Web.Models.Flights.FlightsAdminListViewModel
+@model Web.Models.Flights.AdminListViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -10,6 +10,14 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<ul class="pagination">
+    @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+    {
+        <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+            <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
+        </li>
+    }
+</ul>
 <table class="table">
     <thead>
         <tr>
@@ -46,48 +54,40 @@
     <tbody>
         @foreach (var item in Model.Items)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationFrom)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationTo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartureTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LandingTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlaneType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlaneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PilotName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegularSeats)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BusinessSeats)
-            </td>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartureTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LandingTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlaneType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlaneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PilotName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegularSeats)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BusinessSeats)
+                </td>
 
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
-    <ul class="pagination">
-        @for (var i = 1; i <= Model.Pager.PagesCount; i++)
-        {
-            <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
-                <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
-            </li>
-        }
-    </ul>
 </table>

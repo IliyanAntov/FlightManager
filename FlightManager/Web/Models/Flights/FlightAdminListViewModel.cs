@@ -1,13 +1,13 @@
-﻿using ExpressiveAnnotations.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Web.Models.Flights
+namespace Web.Models.Users
 {
-    public class FlightsCreateViewModel
+    public class FlightAdminListViewModel
     {
+        public int Id { get; set; }
 
         public string LocationFrom { get; set; }
 
@@ -26,5 +26,6 @@ namespace Web.Models.Flights
         public int RegularSeats { get; set; }
 
         public int BusinessSeats { get; set; }
+
     }
 }

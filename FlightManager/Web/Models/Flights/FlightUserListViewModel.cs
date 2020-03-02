@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Web.Models.Users
+namespace Web.Models.Flights
 {
-    public class FlightsAdminViewModel
+    public class FlightUserListViewModel
     {
         public int Id { get; set; }
 
@@ -15,17 +15,12 @@ namespace Web.Models.Users
 
         public DateTime DepartureTime { get; set; }
 
-        public DateTime LandingTime { get; set; }
+        public TimeSpan Duration { get; set; }
 
         public string PlaneType { get; set; }
-
-        public int PlaneNumber { get; set; }
-
-        public string PilotName { get; set; }
 
         public int RegularSeats { get; set; }
 
         public int BusinessSeats { get; set; }
-
     }
 }

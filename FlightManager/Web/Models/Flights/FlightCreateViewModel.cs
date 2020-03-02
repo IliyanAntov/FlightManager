@@ -1,13 +1,13 @@
-﻿using System;
+﻿using ExpressiveAnnotations.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Web.Models.Flights
 {
-    public class FlightsUserViewModel
+    public class FlightCreateViewModel
     {
-        public int Id { get; set; }
 
         public string LocationFrom { get; set; }
 
@@ -15,9 +15,13 @@ namespace Web.Models.Flights
 
         public DateTime DepartureTime { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public DateTime LandingTime { get; set; }
 
         public string PlaneType { get; set; }
+
+        public int PlaneNumber { get; set; }
+
+        public string PilotName { get; set; }
 
         public int RegularSeats { get; set; }
 

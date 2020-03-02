@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Entity;
+using Data.Enumeration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web.Data;
 using Web.Models.Flights;
 using Web.Models.Shared;
@@ -27,15 +29,16 @@ namespace Web.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ActionResult AdminList(FlightsAdminListViewModel model)
+        public ActionResult AdminList(AdminListViewModel model)
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
 
-            List<FlightsAdminViewModel> items = new List<FlightsAdminViewModel>();
+            List<FlightAdminListViewModel> items = new List<FlightAdminListViewModel>();
             foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
             {
-                var viewModel = new FlightsAdminViewModel()
+                int[] availableSeats = GetAvailableTickets(item.Id);
+                var viewModel = new FlightAdminListViewModel()
                 {
                     Id = item.Id,
                     LocationFrom = item.LocationFrom,
@@ -53,21 +56,50 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Users.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
 
             return View(model);
         }
 
+        private int[] GetAvailableTickets(int id)
+        {
+            new List<Passanger>() { new Passanger() };
+            var flight = _context.Flights.Find(id);
+            int availableRegularSeats = flight.RegularSeats;
+            int availableBusinessSeats = flight.BusinessSeats;
+            var reservations = _context.Reservations
+                .Where(x => x.FlightId == id)
+                .Include(x => x.Passangers);
 
-        public ActionResult UserList(FlightsUserListViewModel model)
+            foreach(var reservation in reservations)
+            {
+                foreach (var passanger in reservation.Passangers)
+                {
+                    if (passanger.TicketType == TicketTypeEnum.Regular)
+                    {
+                        availableRegularSeats--;
+                    }
+                    else
+                    {
+                        availableBusinessSeats--;
+                    }
+                }
+                
+            }
+
+            return new int[2] { availableRegularSeats, availableBusinessSeats };
+        }
+
+        public ActionResult UserList(UserListViewModel model)
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
 
-            List<FlightsUserViewModel> items = new List<FlightsUserViewModel>();
+            List<FlightUserListViewModel> items = new List<FlightUserListViewModel>();
             foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
             {
-                var viewModel = new FlightsUserViewModel()
+                int[] availableSeats = GetAvailableTickets(item.Id);
+                var viewModel = new FlightUserListViewModel()
                 {
                     Id = item.Id,
                     LocationFrom = item.LocationFrom,
@@ -75,8 +107,8 @@ namespace Web.Controllers
                     DepartureTime = item.DepartureTime,
                     Duration = item.LandingTime - item.DepartureTime,
                     PlaneType = item.PlaneType,
-                    RegularSeats = item.RegularSeats,
-                    BusinessSeats = item.BusinessSeats
+                    RegularSeats = availableSeats[0],
+                    BusinessSeats = availableSeats[1]
                 };
                 items.Add(viewModel);
             }
@@ -93,7 +125,8 @@ namespace Web.Controllers
         public ActionResult Details(int id)
         {
             var flight = _context.Flights.Find(id);
-            FlightsDetailsViewModel model = new FlightsDetailsViewModel()
+            int[] availableSeats = GetAvailableTickets(id);
+            FlightDetailsViewModel model = new FlightDetailsViewModel()
             {
                 FlightId = flight.Id,
                 LocationFrom = flight.LocationFrom,
@@ -103,15 +136,15 @@ namespace Web.Controllers
                 PlaneType = flight.PlaneType,
                 PlaneNumber = flight.PlaneNumber,
                 PilotName = flight.PilotName,
-                RegularSeats = flight.RegularSeats,
-                BusinessSeats = flight.BusinessSeats
+                RegularSeats = availableSeats[0],
+                BusinessSeats = availableSeats[1]
             };
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Details(FlightsDetailsViewModel createModel)
+        public ActionResult Details(FlightDetailsViewModel createModel)
         {
             if (!ModelState.IsValid)
             {
@@ -119,65 +152,27 @@ namespace Web.Controllers
             }
             else
             {
-                FlightsReserveViewModel model = new FlightsReserveViewModel
+                ReserveViewModel model = new ReserveViewModel
                 {
                     FlightId = createModel.FlightId,
                     TicketNum = createModel.TicketNum
                 };
-                return RedirectToAction("Reserve", model);
+                return RedirectToAction("Reserve", "Reservations", model);
             }
-        }
-
-        public ActionResult Reserve(FlightsReserveViewModel model)
-        {
-            return View(model);
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Confirm(FlightsReserveViewModel createModel)
-        {
-            if (ModelState.IsValid)
-            {
-
-                Reservation reservation = new Reservation()
-                {
-                    FlightId = createModel.FlightId,
-                    Passangers = new List<Passanger>()
-                };
-                foreach (var passangerViewModel in createModel.Passangers)
-                {
-                    Passanger passanger = new Passanger
-                    {
-                        FirstName = passangerViewModel.FirstName,
-                        MiddleName = passangerViewModel.MiddleName,
-                        LastName = passangerViewModel.LastName,
-                        UCN = passangerViewModel.UCN,
-                        PhoneNumber = passangerViewModel.PhoneNumber,
-                        Nationality = passangerViewModel.Nationality,
-                        TicketType = passangerViewModel.TicketType
-                    };
-                    reservation.Passangers.Add(passanger);
-                }
-                _context.Reservations.Add(reservation);
-                _context.SaveChanges();
-            }
-            return RedirectToAction(nameof(UserList));
         }
 
 
         // GET: Flights/Create
         public ActionResult Create()
         {
-            FlightsCreateViewModel model = new FlightsCreateViewModel();
+            FlightCreateViewModel model = new FlightCreateViewModel();
             return View(model);
         }
 
         // POST: Flights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(FlightsCreateViewModel createModel)
+        public ActionResult Create(FlightCreateViewModel createModel)
         {
             if (ModelState.IsValid)
             {

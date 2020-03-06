@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Web.Data;
 using Web.Models.Flights;
+using Web.Models.Reservations;
 using Web.Models.Shared;
 using Web.Models.Users;
 

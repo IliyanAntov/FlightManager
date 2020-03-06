@@ -1,0 +1,54 @@
+﻿@using Web.Models.Reservations
+@model Web.Models.Reservations.ReservationListViewModel
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Reservations</h1>
+
+<table class="table">
+    <tbody>
+        @foreach (var flight in Model.Items)
+        {
+            <tr>
+                <th colspan="3" style="text-align:center; border-top:none; border-bottom:solid">
+                    Flight @flight.FlightSource -> @flight.FlightDestination, @flight.DepartureTime (Plane №@flight.PlaneNum)
+                </th>
+            </tr>
+            if (flight.Reservations.Count() > 0)
+            {
+                <tr>
+                    <th>
+                        E-mail
+                    </th>
+                    <th>Number of tickets</th>
+                </tr>
+                @foreach (var reservation in flight.Reservations)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(x => reservation.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(x => reservation.NumberOfTickets)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", new { reservationId=reservation.Id })
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align:center;">
+                        No reservations for this flight
+                    </td>
+                </tr>
+            }
+            <tr style="height:50px"></tr>
+        }
+    </tbody>
+</table>

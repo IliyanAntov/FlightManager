@@ -1,12 +1,12 @@
 ﻿using Data.Enumeration;
-using ExpressiveAnnotations.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Web.Models.Flights;
 
-namespace Web.Models.Flights
+namespace Web.Models.Reservations
 {
     public class ReserveViewModel
     {

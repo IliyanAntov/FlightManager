@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Web.Models.Reservations;
+using Web.Models.Flights;
 using Web.Models.Shared;
-using Web.Models.Users;
 
 namespace Web.Models.Reservations
 {
-    public class ReservationListViewModel
+    public class ReservationDetailsListViewModel
     {
         public PagerViewModel Pager { get; set; }
 
-        public ICollection<ReservationFlightDataViewModel> Items { get; set; }
+        public int PlaneNum { get; set; }
+
+        public ICollection<PassangerDataViewModel> Items { get; set; }
     }
 }

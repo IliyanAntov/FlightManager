@@ -5,8 +5,12 @@ using System.Threading.Tasks;
 using Data.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web.Data;
 using Web.Models.Flights;
+using Web.Models.Reservations;
+using Web.Models.Shared;
+using Web.Models.Users;
 
 namespace Web.Controllers
 {
@@ -23,9 +27,43 @@ namespace Web.Controllers
 
 
         // GET: Reservations
-        public ActionResult Index()
+        public ActionResult List(ReservationListViewModel model)
         {
-            return View();
+            model.Pager ??= new PagerViewModel();
+            model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+
+            List<ReservationFlightDataViewModel> items = new List<ReservationFlightDataViewModel>();
+            foreach (var flight in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
+            {
+                var viewModel = new ReservationFlightDataViewModel()
+                {
+                    Id = flight.Id,
+                    DepartureTime = flight.DepartureTime,
+                    FlightSource = flight.LocationFrom,
+                    FlightDestination = flight.LocationTo,
+                    PlaneNum = flight.PlaneNumber,
+                    Reservations = new List<ReservationDataViewModel>()
+
+
+                };
+                foreach(var reservation in _context.Reservations.Where(x => x.FlightId == flight.Id).Include(x => x.Passangers).ToList())
+                {
+                    var reservationModel = new ReservationDataViewModel()
+                    {
+                        Id = reservation.Id,
+                        Email = reservation.Email,
+                        NumberOfTickets = reservation.Passangers.Count()
+                    };
+                    viewModel.Reservations.Add(reservationModel);
+                }
+                items.Add(viewModel);
+            }
+
+
+            model.Items = items;
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+
+            return View(model);
         }
 
         public ActionResult Reserve(ReserveViewModel model)
@@ -68,9 +106,37 @@ namespace Web.Controllers
         }
 
         // GET: Reservations/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int reservationId)
         {
-            return View();
+            var model = new ReservationDetailsListViewModel();
+            model.Pager ??= new PagerViewModel();
+            model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+
+            var reservation = _context.Reservations.Include(x => x.Passangers).FirstOrDefault(y => y.Id == reservationId);
+
+            List<PassangerDataViewModel> items = new List<PassangerDataViewModel>();
+
+            foreach (var passanger in reservation.Passangers)
+            {
+                var viewModel = new PassangerDataViewModel()
+                {
+                    FirstName = passanger.FirstName,
+                    MiddleName = passanger.MiddleName,
+                    LastName = passanger.LastName,
+                    UCN = passanger.UCN,
+                    Nationality = passanger.Nationality,
+                    PhoneNumber = passanger.PhoneNumber,
+                    TicketType = passanger.TicketType
+                };
+
+                items.Add(viewModel);
+            }
+
+            model.PlaneNum = _context.Flights.FirstOrDefault(x => x.Id == reservation.FlightId).PlaneNumber;
+            model.Items = items;
+            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)PageSize);
+
+            return View(model);
         }
 
         // GET: Reservations/Create

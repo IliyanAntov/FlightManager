@@ -15,7 +15,7 @@ namespace Web.Models.Flights
 
         public DateTime DepartureTime { get; set; }
 
-        public TimeSpan Duration { get; set; }
+        public string Duration { get; set; }
 
         public string PlaneType { get; set; }
 

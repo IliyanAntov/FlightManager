@@ -7,6 +7,15 @@
 
 <h1>Available flights</h1>
 
+<ul class="pagination">
+    @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+    {
+        <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+            <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
+        </li>
+    }
+</ul>
+
 <table class="table">
     <thead>
         <tr>
@@ -48,7 +57,7 @@
                 @Html.DisplayFor(modelItem => item.DepartureTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Duration.Hours) hrs
+                @Html.DisplayFor(modelItem => item.Duration) hrs
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PlaneType)
@@ -65,12 +74,4 @@
         </tr>
         }
     </tbody>
-    <ul class="pagination">
-        @for (var i = 1; i <= Model.Pager.PagesCount; i++)
-        {
-            <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
-                <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
-            </li>
-        }
-    </ul>
 </table>

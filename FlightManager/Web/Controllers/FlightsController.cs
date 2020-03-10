@@ -100,13 +100,15 @@ namespace Web.Controllers
             foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
             {
                 int[] availableSeats = GetAvailableTickets(item.Id);
+                var duration = (item.LandingTime - item.DepartureTime).TotalMinutes;
+                string durationString = String.Format("{0}:{1:00}", (int)(duration / 60), (duration % 60));
                 var viewModel = new FlightUserListViewModel()
                 {
                     Id = item.Id,
                     LocationFrom = item.LocationFrom,
                     LocationTo = item.LocationTo,
                     DepartureTime = item.DepartureTime,
-                    Duration = item.LandingTime - item.DepartureTime,
+                    Duration = durationString,
                     PlaneType = item.PlaneType,
                     RegularSeats = availableSeats[0],
                     BusinessSeats = availableSeats[1]
@@ -116,7 +118,7 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Users.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
 
             return View(model);
         }
@@ -156,7 +158,9 @@ namespace Web.Controllers
                 ReserveViewModel model = new ReserveViewModel
                 {
                     FlightId = createModel.FlightId,
-                    TicketNum = createModel.TicketNum
+                    TicketNum = createModel.TicketNum,
+                    AvailableRegularSeats = createModel.RegularSeats,
+                    AvailableBusinessSeats = createModel.BusinessSeats
                 };
                 return RedirectToAction("Reserve", "Reservations", model);
             }

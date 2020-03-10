@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 using Data.Entity;
+using Data.Enumeration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +16,7 @@ using Web.Models.Flights;
 using Web.Models.Reservations;
 using Web.Models.Shared;
 using Web.Models.Users;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Web.Controllers
 {
@@ -46,7 +52,7 @@ namespace Web.Controllers
 
 
                 };
-                foreach(var reservation in _context.Reservations.Where(x => x.FlightId == flight.Id).Include(x => x.Passangers).ToList())
+                foreach (var reservation in _context.Reservations.Where(x => x.FlightId == flight.Id).Include(x => x.Passangers).ToList())
                 {
                     var reservationModel = new ReservationDataViewModel()
                     {
@@ -78,6 +84,19 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var regularTicketNum = 0;
+                var businessTicketNum = 0;
+                foreach (var passanger in createModel.Passangers)
+                {
+                    if (passanger.TicketType == TicketTypeEnum.Regular)
+                    {
+                        regularTicketNum++;
+                    }
+                    else
+                    {
+                        businessTicketNum++;
+                    }
+                }
 
                 Reservation reservation = new Reservation()
                 {
@@ -101,9 +120,65 @@ namespace Web.Controllers
                 }
                 _context.Reservations.Add(reservation);
                 _context.SaveChanges();
+                return RedirectToAction("Confirmation", "Reservations", new { reservationId = reservation.Id, flightId = createModel.FlightId });
             }
             return RedirectToAction("UserList", "Flights");
         }
+
+        public ActionResult Confirmation(int reservationId, int flightId)
+        {
+            var flight = _context.Flights.FirstOrDefault(x => x.Id == flightId);
+            var reservation = _context.Reservations.Include(y => y.Passangers).FirstOrDefault(x => x.Id == reservationId);
+
+            var confirmationModel = new ConfirmationViewModel()
+            {
+                DepartureTime = flight.DepartureTime,
+                FlightSource = flight.LocationFrom,
+                FlightDestination = flight.LocationTo,
+                Passangers = new List<PassangerDataViewModel>()
+            };
+            foreach (var passanger in reservation.Passangers)
+            {
+                PassangerDataViewModel passangerModel = new PassangerDataViewModel()
+                {
+                    FirstName = passanger.FirstName,
+                    MiddleName = passanger.MiddleName,
+                    LastName = passanger.LastName,
+                    UCN = passanger.UCN,
+                    PhoneNumber = passanger.PhoneNumber,
+                    Nationality = passanger.Nationality,
+                    TicketType = passanger.TicketType
+                };
+                confirmationModel.Passangers.Add(passangerModel);
+            }
+            SendMailAsync(confirmationModel);
+            return View(confirmationModel);
+        }
+
+        private async void SendMailAsync(ConfirmationViewModel model)
+        {
+            string path = "Views/Reservations/";
+
+            var email = new MailMessage();
+            email.To.Add(new MailAddress(model.Email));
+            email.From = new MailAddress("flightsmanager.iantov@gmail.com");
+            email.Subject = "Reservation details";
+            email.Body = "a";
+            email.IsBodyHtml = true;
+            var smtp = new SmtpClient();
+            var credential = new NetworkCredential
+            {
+                UserName = "flightsmanager.iantov@gmail.com",  // replace with valid value
+                Password = "flightsmanager"  // replace with valid value
+            };
+            smtp.Credentials = credential;
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.EnableSsl = true;
+            await smtp.SendMailAsync(email);
+        }
+
+
 
         // GET: Reservations/Details/5
         public ActionResult Details(int reservationId)

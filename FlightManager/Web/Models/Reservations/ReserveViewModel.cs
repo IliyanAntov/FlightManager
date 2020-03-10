@@ -15,6 +15,10 @@ namespace Web.Models.Reservations
 
         public int TicketNum { get; set; }
 
+        public int AvailableRegularSeats { get; set; }
+
+        public int AvailableBusinessSeats { get; set; }
+
         public string Email { get; set; }
 
         public List<PassangerDataViewModel> Passangers { get; set; }

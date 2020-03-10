@@ -1,0 +1,71 @@
+﻿@model Web.Models.Reservations.ConfirmationViewModel
+
+
+@{
+    ViewData["Title"] = "Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 style="text-align:center">Your reservation</h1>
+
+<table class="table">
+    <thead>
+        <tr style="height:50px"></tr>
+        <tr>
+            <th colspan="7" style="text-align:center; border-top:none; border-bottom:solid">
+                Flight @Model.FlightSource -> @Model.FlightDestination, @Model.DepartureTime
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>
+                First name
+            </th>
+            <th>
+                Middle name
+            </th>
+            <th>
+                Last name
+            </th>
+            <th>
+                Nationality
+            </th>
+            <th>
+                Phone number
+            </th>
+            <th>
+                UCN
+            </th>
+            <th>
+                Ticket type
+            </th>
+        </tr>
+        @foreach (var item in Model.Passangers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MiddleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nationality)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UCN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketType)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

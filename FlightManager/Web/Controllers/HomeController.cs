@@ -20,7 +20,7 @@ namespace Web.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("UserList", "Flights");
         }
 
         public IActionResult Privacy()

@@ -17,6 +17,8 @@ using Web.Models.Reservations;
 using Web.Models.Shared;
 using Web.Models.Users;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using RazorLight;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 
 namespace Web.Controllers
 {
@@ -120,18 +122,19 @@ namespace Web.Controllers
                 }
                 _context.Reservations.Add(reservation);
                 _context.SaveChanges();
-                return RedirectToAction("Confirmation", "Reservations", new { reservationId = reservation.Id, flightId = createModel.FlightId });
+                return RedirectToAction("Confirmation", "Reservations", new { reservationId = reservation.Id, flightId = createModel.FlightId, email = createModel.Email });
             }
             return RedirectToAction("UserList", "Flights");
         }
 
-        public ActionResult Confirmation(int reservationId, int flightId)
+        public ActionResult Confirmation(int reservationId, int flightId, string email)
         {
             var flight = _context.Flights.FirstOrDefault(x => x.Id == flightId);
             var reservation = _context.Reservations.Include(y => y.Passangers).FirstOrDefault(x => x.Id == reservationId);
 
             var confirmationModel = new ConfirmationViewModel()
             {
+                Email = email,
                 DepartureTime = flight.DepartureTime,
                 FlightSource = flight.LocationFrom,
                 FlightDestination = flight.LocationTo,
@@ -157,13 +160,24 @@ namespace Web.Controllers
 
         private async void SendMailAsync(ConfirmationViewModel model)
         {
-            string path = "Views/Reservations/";
+            string path = "Views/Reservations/Confirmation.cshtml";
+            string template = "";
+            using (StreamReader sr = new StreamReader(path))
+            {
+                template = sr.ReadToEnd();
+            }
 
+            var engine = new RazorLightEngineBuilder()
+              .UseFileSystemProject("C:/Users/SoMe0nE/Desktop/FlightManager/FlightManager/Web/Views")
+              .UseMemoryCachingProvider()
+              .Build();
+
+            string result = await engine.CompileRenderAsync("Reservations/Email.cshtml", model);
             var email = new MailMessage();
             email.To.Add(new MailAddress(model.Email));
             email.From = new MailAddress("flightsmanager.iantov@gmail.com");
             email.Subject = "Reservation details";
-            email.Body = "a";
+            email.Body = result;
             email.IsBodyHtml = true;
             var smtp = new SmtpClient();
             var credential = new NetworkCredential

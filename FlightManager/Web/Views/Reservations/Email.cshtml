@@ -1,0 +1,66 @@
+﻿@model Web.Models.Reservations.ConfirmationViewModel
+
+
+<h1 style="text-align:left">Your reservation</h1>
+
+<table class="table">
+    <thead>
+        <tr style="height:50px"></tr>
+        <tr>
+            <th colspan="7" style="text-align:center; border-top:none; border-bottom:solid">
+                Flight @Model.FlightSource -> @Model.FlightDestination, @Model.DepartureTime
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>
+                First name
+            </th>
+            <th>
+                Middle name
+            </th>
+            <th>
+                Last name
+            </th>
+            <th>
+                Nationality
+            </th>
+            <th>
+                Phone number
+            </th>
+            <th>
+                UCN
+            </th>
+            <th>
+                Ticket type
+            </th>
+        </tr>
+        @foreach (var item in Model.Passangers)
+        {
+            <tr>
+                <td>
+                    @item.FirstName
+                </td>
+                <td>
+                    @item.MiddleName
+                </td>
+                <td>
+                    @item.LastName
+                </td>
+                <td>
+                    @item.Nationality
+                </td>
+                <td>
+                    @item.PhoneNumber
+                </td>
+                <td>
+                    @item.UCN
+                </td>
+                <td>
+                    @item.TicketType
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

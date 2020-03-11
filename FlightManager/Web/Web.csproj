@@ -3,25 +3,18 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-Web-F2A09748-8225-4CCA-89CD-DD885990C40E</UserSecretsId>
+    <StartupObject>Web.Program</StartupObject>
   </PropertyGroup>
-
-  <ItemGroup>
-    <COMReference Include="{bed7f4ea-1a96-11d2-8f08-00a0c9a6186d}">
-      <Guid>bed7f4ea-1a96-11d2-8f08-00a0c9a6186d</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>4</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-    </COMReference>
-  </ItemGroup>
 
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="RazorLight" Version="2.0.0-beta4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
 

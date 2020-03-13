@@ -20,9 +20,8 @@ namespace Web.Controllers
     public class FlightsController : Controller
     {
 
-        private const int PageSize = 10;
         private readonly ApplicationDbContext _context;
-
+        private int PageSize { get; set; }
 
         public FlightsController(ApplicationDbContext context)
         {
@@ -34,9 +33,10 @@ namespace Web.Controllers
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+            model.Pager.PageSize = model.Pager.PageSize <= 0 ? 10 : model.Pager.PageSize;
 
             List<FlightAdminListViewModel> items = new List<FlightAdminListViewModel>();
-            foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
+            foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * model.Pager.PageSize).Take(model.Pager.PageSize).ToList())
             {
                 int[] availableSeats = GetAvailableTickets(item.Id);
                 var viewModel = new FlightAdminListViewModel()
@@ -57,7 +57,7 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)model.Pager.PageSize);
 
             return View(model);
         }
@@ -95,9 +95,10 @@ namespace Web.Controllers
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+            model.Pager.PageSize = model.Pager.PageSize <= 0 ? 10 : model.Pager.PageSize;
 
             List<FlightUserListViewModel> items = new List<FlightUserListViewModel>();
-            foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
+            foreach (var item in _context.Flights.Skip((model.Pager.CurrentPage - 1) * model.Pager.PageSize).Take(model.Pager.PageSize).ToList())
             {
                 int[] availableSeats = GetAvailableTickets(item.Id);
                 var duration = (item.LandingTime - item.DepartureTime).TotalMinutes;
@@ -118,7 +119,7 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)model.Pager.PageSize);
 
             return View(model);
         }

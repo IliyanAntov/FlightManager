@@ -6,15 +6,17 @@
 }
 
 <h1>Available flights</h1>
+@using (Html.BeginForm())
+{
+<div id="pro_pag2">
+    <input asp-for="Pager.CurrentPage" type="hidden" value="1" />
+    @Html.DropDownListFor(m => m.Pager.PageSize,
+                       new SelectList(new Dictionary<string, int> { { "5", 5 }, { "10", 10 }, { "25", 25 } }, "Key", "Value"),
+                       new { @class = "pro_pag_tf1", id = "pagesizelist" })
 
-<ul class="pagination">
-    @for (var i = 1; i <= Model.Pager.PagesCount; i++)
-    {
-        <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
-            <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
-        </li>
-    }
-</ul>
+</div>
+}
+
 
 <table class="table">
     <thead>
@@ -46,32 +48,51 @@
     <tbody>
         @foreach (var item in Model.Items)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationFrom)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationTo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartureTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Duration) hrs
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlaneType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegularSeats)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BusinessSeats)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Reserve</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartureTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Duration) hrs
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PlaneType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegularSeats)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BusinessSeats)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Reserve</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
+
+<ul class="pagination">
+    @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+    {
+        <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+            <a asp-route-Pager.CurrentPage="@i" asp-route-Pager.PageSize="@Model.Pager.PageSize" class="page-link">@i</a>
+        </li>
+    }
+</ul>
+
+@section scripts {
+    <script type="text/javascript">
+        $('#pagesizelist').on('change', function (event) {
+            var form = $(event.target).parents('form');
+            
+            form.submit();
+        });
+    </script>
+}

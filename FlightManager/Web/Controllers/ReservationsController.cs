@@ -24,7 +24,8 @@ namespace Web.Controllers
 {
     public class ReservationsController : Controller
     {
-        private int pageSize = 10;
+
+        private int PageSize = 10;
         private readonly ApplicationDbContext _context;
 
 
@@ -38,9 +39,19 @@ namespace Web.Controllers
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+            model.Pager.PageSize = model.Pager.PageSize <= 0 ? 10 : model.Pager.PageSize;
+            List<Flight> flights = new List<Flight>();
+            if (model.FilterCriteria != null && model.Filter != null)
+            {
+                flights = _context.Flights.ToList();
+            }
+            else
+            {
+                flights = _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+            }
 
             List<ReservationFlightDataViewModel> items = new List<ReservationFlightDataViewModel>();
-            foreach (var flight in _context.Flights.Skip((model.Pager.CurrentPage - 1) * pageSize).Take(pageSize).ToList())
+            foreach (var flight in flights)
             {
                 var viewModel = new ReservationFlightDataViewModel()
                 {
@@ -53,7 +64,22 @@ namespace Web.Controllers
 
 
                 };
-                foreach (var reservation in _context.Reservations.Where(x => x.FlightId == flight.Id).Include(x => x.Passangers).ToList())
+                List<Reservation> reservations = new List<Reservation>();
+                if (model.FilterCriteria != null && model.Filter != null)
+                {
+                    switch (model.FilterCriteria)
+                    {
+                        case "email":
+                            reservations = _context.Reservations.Include(x => x.Passangers).Where(x => x.Email.Contains(model.Filter)).ToList();
+                            break;
+                    }
+                }
+                else
+                {
+                    reservations = _context.Reservations.Include(x => x.Passangers).ToList();
+                }
+
+                foreach (var reservation in reservations.Where(x => x.FlightId == flight.Id).ToList())
                 {
                     var reservationModel = new ReservationDataViewModel()
                     {
@@ -64,11 +90,12 @@ namespace Web.Controllers
                     viewModel.Reservations.Add(reservationModel);
                 }
                 items.Add(viewModel);
+
             }
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)pageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
 
             return View(model);
         }
@@ -220,7 +247,7 @@ namespace Web.Controllers
 
             model.PlaneNum = _context.Flights.FirstOrDefault(x => x.Id == reservation.FlightId).PlaneNumber;
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)pageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)PageSize);
 
             return View(model);
         }

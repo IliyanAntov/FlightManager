@@ -17,8 +17,6 @@ namespace Web.Controllers
 {
     public class UsersController : Controller
     {
-
-        private const int PageSize = 10;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -35,9 +33,34 @@ namespace Web.Controllers
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
+            model.Pager.PageSize = model.Pager.PageSize <= 0 ? 10 : model.Pager.PageSize;
+            List<ApplicationUser> users = new List<ApplicationUser>();
+
+            if(model.FilterCriteria != null && model.Filter != null)
+            {
+                switch (model.FilterCriteria)
+                {
+                    case "email":
+                        users = _context.Users.Where(x => x.Email.Contains(model.Filter)).ToList();
+                        break;
+                    case "username":
+                        users = _context.Users.Where(x => x.UserName.Contains(model.Filter)).ToList();
+                        break;
+                    case "firstName":
+                        users = _context.Users.Where(x => x.FirstName.Contains(model.Filter)).ToList();
+                        break;
+                    case "lastName":
+                        users = _context.Users.Where(x => x.LastName.Contains(model.Filter)).ToList();
+                        break;
+                }
+            }
+            else
+            {
+                users = _context.Users.ToList();
+            }
 
             List<UsersViewModel> items = new List<UsersViewModel>();
-            foreach (var item in _context.Users.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
+            foreach (var item in users.Skip((model.Pager.CurrentPage - 1) * model.Pager.PageSize).Take(model.Pager.PageSize).ToList())
             {
                 var viewModel = new UsersViewModel()
                 {
@@ -62,7 +85,7 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Users.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(users.Count() / (double)model.Pager.PageSize);
 
             return View(model);
         }

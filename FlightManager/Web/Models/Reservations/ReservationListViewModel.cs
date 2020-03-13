@@ -10,6 +10,10 @@ namespace Web.Models.Reservations
 {
     public class ReservationListViewModel
     {
+        public string FilterCriteria { get; set; }
+
+        public string Filter { get; set; }
+
         public PagerViewModel Pager { get; set; }
 
         public ICollection<ReservationFlightDataViewModel> Items { get; set; }

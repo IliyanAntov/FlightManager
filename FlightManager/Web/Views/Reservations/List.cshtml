@@ -7,55 +7,99 @@
 }
 
 <h1>Reservations</h1>
-<ul class="pagination">
-    @for (var i = 1; i <= Model.Pager.PagesCount; i++)
-    {
-        <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
-            <a asp-route-Pager.CurrentPage="@i" class="page-link">@i</a>
-        </li>
-    }
-</ul>
+
+@if (Model.Filter == null)
+{
+    <ul class="pagination" style="display:flex; float:left">
+        @for (var i = 1; i <= Model.Pager.PagesCount; i++)
+        {
+            <li class="page-item @(i == Model.Pager.CurrentPage ? "active" : "")">
+                <a asp-route-Pager.CurrentPage="@i" asp-route-Pager.PageSize="@Model.Pager.PageSize" asp-route-FilterCriteria="@Model.FilterCriteria" asp-route-Filter="@Model.Filter" class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+}
+@using (Html.BeginForm())
+{
+    <div id="pro_pag2" style="margin-bottom:20px; display:flex; float:right">
+        <input asp-for="Filter" placeholder="Email" />
+        <input asp-for="FilterCriteria" type="hidden" value="email" />
+        <input asp-for="Pager.CurrentPage" type="hidden" value="1" />
+        <input type="submit" value="Filter" class="btn btn-primary" />
+
+
+    </div>
+}
+
 <table class="table">
     <tbody>
         @foreach (var flight in Model.Items)
         {
-            <tr>
-                <th colspan="3" style="text-align:center; border-top:none; border-bottom:solid">
-                    Flight @flight.FlightSource -> @flight.FlightDestination, @flight.DepartureTime (Plane №@flight.PlaneNum)
-                </th>
-            </tr>
-            if (flight.Reservations.Count() > 0)
+            @if (Model.Filter != null)
             {
-                <tr>
-                    <th>
-                        E-mail
-                    </th>
-                    <th>Number of tickets</th>
-                </tr>
-                @foreach (var reservation in flight.Reservations)
+                if (flight.Reservations.Count() > 0)
                 {
                     <tr>
-                        <td>
-                            @Html.DisplayFor(x => reservation.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(x => reservation.NumberOfTickets)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Details", "Details", new { reservationId=reservation.Id })
-                        </td>
+                        <th colspan="3" style="text-align:center; border-top:none; border-bottom:solid">
+                            Flight @flight.FlightSource -> @flight.FlightDestination, @flight.DepartureTime (Plane №@flight.PlaneNum)
+                        </th>
                     </tr>
+                    @foreach (var reservation in flight.Reservations)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(x => reservation.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => reservation.NumberOfTickets)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Details", "Details", new { reservationId = reservation.Id })
+                            </td>
+                        </tr>
+                    }
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="3" style="text-align:center;">
-                        No reservations for this flight
-                    </td>
+                    <th colspan="3" style="text-align:center; border-top:none; border-bottom:solid">
+                        Flight @flight.FlightSource -> @flight.FlightDestination, @flight.DepartureTime (Plane №@flight.PlaneNum)
+                    </th>
                 </tr>
+                if (flight.Reservations.Count() > 0)
+                {
+                    <tr>
+                        <th>
+                            E-mail
+                        </th>
+                        <th>Number of tickets</th>
+                    </tr>
+                    @foreach (var reservation in flight.Reservations)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(x => reservation.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(x => reservation.NumberOfTickets)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Details", "Details", new { reservationId = reservation.Id })
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" style="text-align:center;">
+                            No reservations for this flight
+                        </td>
+                    </tr>
+                }
+                <tr style="height:50px"></tr>
             }
-            <tr style="height:50px"></tr>
         }
     </tbody>
 </table>

@@ -30,7 +30,6 @@ namespace Web.Controllers
             _roleManager = roleManager;
         }
 
-        // GET: Users
         [Authorize(Roles="Admin")]
         public ActionResult List(UsersListViewModel model)
         {
@@ -68,14 +67,13 @@ namespace Web.Controllers
             return View(model);
         }
 
-        // GET: Users/Create
+
         public ActionResult Create()
         {
             UsersCreateViewModel model = new UsersCreateViewModel();
             return View(model);
         }
 
-        // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(UsersCreateViewModel createModel)
@@ -105,7 +103,7 @@ namespace Web.Controllers
             return View(createModel);
         }
 
-        // GET: Users/Edit/5
+
         public ActionResult Edit(string id)
         {
             ApplicationUser user = _context.Users.Find(id);
@@ -129,7 +127,6 @@ namespace Web.Controllers
             return View(model);
         }
 
-        // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(UsersEditViewModel editModel)
@@ -162,7 +159,7 @@ namespace Web.Controllers
 
         }
 
-        // GET: Users/Delete/5
+
         public ActionResult Delete(string id)
         {
             ApplicationUser user = _userManager.FindByIdAsync(id).Result;
@@ -170,7 +167,6 @@ namespace Web.Controllers
             return RedirectToAction(nameof(List));
         }
 
-        // POST: Users/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

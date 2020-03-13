@@ -124,7 +124,6 @@ namespace Web.Controllers
         }
 
 
-        // GET: Flights/Details/5
         public ActionResult Details(int id)
         {
             var flight = _context.Flights.Find(id);
@@ -167,14 +166,12 @@ namespace Web.Controllers
         }
 
 
-        // GET: Flights/Create
         public ActionResult Create()
         {
             FlightCreateViewModel model = new FlightCreateViewModel();
             return View(model);
         }
 
-        // POST: Flights/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(FlightCreateViewModel createModel)
@@ -203,51 +200,72 @@ namespace Web.Controllers
         }
 
 
-
-        // GET: Flights/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Flight flight = _context.Flights.Find(id);
+            if (flight == null)
+            {
+                return NotFound();
+            }
+
+            FlightEditViewModel model = new FlightEditViewModel
+            {
+                Id = flight.Id,
+                LocationFrom = flight.LocationFrom,
+                LocationTo = flight.LocationTo,
+                DepartureTime = flight.DepartureTime,
+                LandingTime = flight.LandingTime,
+                PlaneType = flight.PlaneType,
+                PlaneNumber = flight.PlaneNumber,
+                PilotName = flight.PilotName,
+                RegularSeats = flight.RegularSeats,
+                BusinessSeats = flight.BusinessSeats
+            };
+
+            return View(model);
         }
 
-        // POST: Flights/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(FlightEditViewModel editModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add update logic here
+                Flight flight = new Flight()
+                {
+                    Id = editModel.Id,
+                    LocationFrom = editModel.LocationFrom,
+                    LocationTo = editModel.LocationTo,
+                    DepartureTime = editModel.DepartureTime,
+                    LandingTime = editModel.LandingTime,
+                    PlaneType = editModel.PlaneType,
+                    PlaneNumber = editModel.PlaneNumber,
+                    PilotName = editModel.PilotName,
+                    RegularSeats = editModel.RegularSeats,
+                    BusinessSeats = editModel.BusinessSeats
+                };
+                try
+                {
+                    _context.Flights.Update(flight);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                }
+                return RedirectToAction(nameof(AdminList));
+            };
+            return View(editModel);
         }
 
-        // GET: Flights/Delete/5
+
         public ActionResult Delete(int id)
         {
-            return View();
+            Flight flight = _context.Flights.Find(id);
+            _context.Flights.Remove(flight);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(AdminList));
         }
 
-        // POST: Flights/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

@@ -24,7 +24,7 @@ namespace Web.Controllers
 {
     public class ReservationsController : Controller
     {
-        private const int PageSize = 10;
+        private int pageSize = 10;
         private readonly ApplicationDbContext _context;
 
 
@@ -34,14 +34,13 @@ namespace Web.Controllers
         }
 
 
-        // GET: Reservations
         public ActionResult List(ReservationListViewModel model)
         {
             model.Pager ??= new PagerViewModel();
             model.Pager.CurrentPage = model.Pager.CurrentPage <= 0 ? 1 : model.Pager.CurrentPage;
 
             List<ReservationFlightDataViewModel> items = new List<ReservationFlightDataViewModel>();
-            foreach (var flight in _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList())
+            foreach (var flight in _context.Flights.Skip((model.Pager.CurrentPage - 1) * pageSize).Take(pageSize).ToList())
             {
                 var viewModel = new ReservationFlightDataViewModel()
                 {
@@ -69,7 +68,7 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)pageSize);
 
             return View(model);
         }
@@ -78,7 +77,6 @@ namespace Web.Controllers
         {
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -193,7 +191,6 @@ namespace Web.Controllers
         }
 
 
-
         // GET: Reservations/Details/5
         public ActionResult Details(int reservationId)
         {
@@ -223,78 +220,11 @@ namespace Web.Controllers
 
             model.PlaneNum = _context.Flights.FirstOrDefault(x => x.Id == reservation.FlightId).PlaneNumber;
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)pageSize);
 
             return View(model);
         }
 
-        // GET: Reservations/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
-        // POST: Reservations/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Reservations/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Reservations/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Reservations/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Reservations/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

@@ -8,7 +8,7 @@
 <h1>Available flights</h1>
 @using (Html.BeginForm())
 {
-<div id="pro_pag2">
+<div id="pro_pag2" style="margin-bottom:20px">
     <input asp-for="Pager.CurrentPage" type="hidden" value="1" />
     @Html.DropDownListFor(m => m.Pager.PageSize,
                        new SelectList(new Dictionary<string, int> { { "5", 5 }, { "10", 10 }, { "25", 25 } }, "Key", "Value"),

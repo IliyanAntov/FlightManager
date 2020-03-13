@@ -114,6 +114,10 @@ namespace Web.Controllers
                     PhoneNumber = createModel.PhoneNumber
 
                 };
+                if(_userManager.FindByNameAsync(createModel.Username).Result != null)
+                {
+                    return RedirectToAction("Error", "Home", new { errorMessage = "Username already exists" });
+                }
                 var createUser = _userManager.CreateAsync(user, createModel.Password).Result;
                 if (createUser.Succeeded)
                 {
@@ -156,6 +160,12 @@ namespace Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var result = _userManager.FindByNameAsync(editModel.Username).Result;
+                if (result != null && result.Id != editModel.Id)
+                {
+                    return RedirectToAction("Error", "Home", new { errorMessage = "Username already exists" });
+                }
+
                 ApplicationUser user = _userManager.FindByIdAsync(editModel.Id).Result;
                 user.UserName = editModel.Username;
                 user.Email = editModel.Email;

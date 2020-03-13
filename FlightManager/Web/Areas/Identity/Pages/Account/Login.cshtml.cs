@@ -44,8 +44,7 @@ namespace Web.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
-            public string Email { get; set; }
+            public string Username { get; set; }
 
             [Required]
             [DataType(DataType.Password)]
@@ -78,7 +77,7 @@ namespace Web.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = _signInManager.UserManager.Users.Where(u => u.Email == Input.Email).FirstOrDefault();
+                var user = _signInManager.UserManager.Users.Where(u => u.UserName == Input.Username).FirstOrDefault();
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");

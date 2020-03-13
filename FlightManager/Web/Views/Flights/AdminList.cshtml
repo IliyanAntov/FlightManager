@@ -8,11 +8,12 @@
 <h1>Flights</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
+
 @using (Html.BeginForm())
 {
-    <div id="pro_pag2">
+    <div id="pro_pag2" style="margin-bottom: 20px">
         <input asp-for="Pager.CurrentPage" type="hidden" value="1" />
         @Html.DropDownListFor(m => m.Pager.PageSize,
                            new SelectList(new Dictionary<string, int> { { "5", 5 }, { "10", 10 }, { "25", 25 } }, "Key", "Value"),

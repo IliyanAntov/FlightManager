@@ -193,7 +193,6 @@ namespace Web.Controllers
                 }
                 return View(createModel);
             }
-            //return RedirectToAction("Reserve", "Reservations");
         }
 
         public ActionResult Confirmation(int reservationId, int flightId, string email)
@@ -229,12 +228,6 @@ namespace Web.Controllers
 
         private async void SendMailAsync(ConfirmationViewModel model)
         {
-            string path = "Views/Reservations/Confirmation.cshtml";
-            string template = "";
-            using (StreamReader sr = new StreamReader(path))
-            {
-                template = sr.ReadToEnd();
-            }
 
             var engine = new RazorLightEngineBuilder()
               .UseFileSystemProject("C:/Users/SoMe0nE/Desktop/FlightManager/FlightManager/Web/Views")

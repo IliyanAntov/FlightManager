@@ -15,10 +15,15 @@ namespace Web.Models.Reservations
 
         public int TicketNum { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = "Not enough available seats")]
         public int AvailableRegularSeats { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = "Not enough available seats")]
         public int AvailableBusinessSeats { get; set; }
 
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        [EmailAddress(ErrorMessage = "Please enter a valid Email address")]
         public string Email { get; set; }
 
         public List<PassangerDataViewModel> Passangers { get; set; }

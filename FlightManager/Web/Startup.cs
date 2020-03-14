@@ -38,6 +38,7 @@ namespace Web
                 .AddDefaultTokenProviders();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddMvc().AddRazorRuntimeCompilation();
 
         }
 

@@ -6,71 +6,117 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Reserve</h1>
+<h1>Reserve tickets</h1>
 
-<h4>FlightsReserveViewModel</h4>
 
 <hr />
+<form asp-action="Reserve">
+    <div class="col-md-3" style="float:right; margin-bottom:20px;">
+        <label asp-for="AvailableRegularSeats" class="control-label">Available regular seats:</label>
+        <input asp-for="AvailableRegularSeats" class="form-control" id="regularSeatsLabel" value="@Model.AvailableRegularSeats" readonly />
+        <span asp-validation-for="AvailableRegularSeats" class="text-danger"></span>
+    </div>
+    <div class="col-md-3" style="clear:right; float:right">
+        <label asp-for="AvailableBusinessSeats" class="control-label">Available business class seats:</label>
+        <input asp-for="AvailableBusinessSeats" class="form-control" id="businessSeatsLabel" value="@Model.AvailableBusinessSeats" readonly />
+        <span asp-validation-for="AvailableBusinessSeats" class="text-danger"></span>
+    </div>
     <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Confirm">
-                <input asp-for="FlightId" type="hidden" value="@Model.FlightId" />
+        <div class="col-md-5">
+            <input asp-for="FlightId" type="hidden" value="@Model.FlightId" />
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            @for (int i = 0; i < Model.TicketNum; i++)
+            {
+                <h4>Passanger #@(i + 1)</h4>
                 <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <label asp-for="Passangers[i].FirstName" class="control-label"></label>
+                    <input asp-for="Passangers[i].FirstName" class="form-control" />
+                    <span asp-validation-for="Passangers[i].FirstName" class="text-danger"></span>
                 </div>
-                @for (int i = 0; i < Model.TicketNum; i++)
-                {
-                    <h4>Passanger #@(i + 1)</h4>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].FirstName" class="control-label"></label>
-                        <input asp-for="Passangers[i].FirstName" class="form-control" />
-                        <span asp-validation-for="Passangers[i].FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].MiddleName" class="control-label"></label>
-                        <input asp-for="Passangers[i].MiddleName" class="form-control" />
-                        <span asp-validation-for="Passangers[i].MiddleName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].LastName" class="control-label"></label>
-                        <input asp-for="Passangers[i].LastName" class="form-control" />
-                        <span asp-validation-for="Passangers[i].LastName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].UCN" class="control-label"></label>
-                        <input asp-for="Passangers[i].UCN" class="form-control" />
-                        <span asp-validation-for="Passangers[i].UCN" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].PhoneNumber" class="control-label"></label>
-                        <input asp-for="Passangers[i].PhoneNumber" class="form-control" />
-                        <span asp-validation-for="Passangers[i].PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].Nationality" class="control-label"></label>
-                        <input asp-for="Passangers[i].Nationality" class="form-control" />
-                        <span asp-validation-for="Passangers[i].Nationality" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Passangers[i].TicketType" class="control-label"></label>
-                        @Html.DropDownListFor(m => m.Passangers[i].TicketType, Html.GetEnumSelectList<TicketTypeEnum>(), new { @class = "form-control" })
-                        <span asp-validation-for="Passangers[i].TicketType" class="text-danger"></span>
-                    </div>
-                }
-                <input asp-for="AvailableRegularSeats" type="hidden" value="@Model.AvailableRegularSeats" />
-                <input asp-for="AvailableBusinessSeats" type="hidden" value="@Model.AvailableBusinessSeats" />
                 <div class="form-group">
-                    <input type="submit" value="Confirm" class="btn btn-primary" />
+                    <label asp-for="Passangers[i].MiddleName" class="control-label"></label>
+                    <input asp-for="Passangers[i].MiddleName" class="form-control" />
+                    <span asp-validation-for="Passangers[i].MiddleName" class="text-danger"></span>
                 </div>
-            </form>
+                <div class="form-group">
+                    <label asp-for="Passangers[i].LastName" class="control-label"></label>
+                    <input asp-for="Passangers[i].LastName" class="form-control" />
+                    <span asp-validation-for="Passangers[i].LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Passangers[i].UCN" class="control-label"></label>
+                    <input asp-for="Passangers[i].UCN" class="form-control" />
+                    <span asp-validation-for="Passangers[i].UCN" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Passangers[i].PhoneNumber" class="control-label"></label>
+                    <input asp-for="Passangers[i].PhoneNumber" class="form-control" />
+                    <span asp-validation-for="Passangers[i].PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Passangers[i].Nationality" class="control-label"></label>
+                    <input asp-for="Passangers[i].Nationality" class="form-control" />
+                    <span asp-validation-for="Passangers[i].Nationality" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Passangers[i].TicketType" class="control-label"></label>
+                    @Html.DropDownListFor(m => m.Passangers[i].TicketType, Html.GetEnumSelectList<TicketTypeEnum>(), new { @class = "form-control ticketType" })
+                    <span asp-validation-for="Passangers[i].TicketType" class="text-danger"></span>
+                </div>
+            }
+
+            <input asp-for="TicketNum" type="hidden" value="@Model.TicketNum" />
+            <div class="form-group">
+                <input type="submit" value="Confirm" class="btn btn-primary" />
+            </div>
         </div>
     </div>
+</form>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Flights" asp-action="UserList">Back to List</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        function initial() {
+            var val = $(this).children("option:selected").text();
+            var currentRegularSeatsVal = parseInt($('#regularSeatsLabel').val())
+            var currentBusinessSeatsVal = parseInt($('#businessSeatsLabel').val())
+            console.log(val)
+            if (val == "Regular") {
+                var currentRegularSeatsVal = $('#regularSeatsLabel').val()
+                $('#regularSeatsLabel').val(currentRegularSeatsVal - 1)
+            }
+            else {
+                $('#businessSeatsLabel').val(currentBusinessSeatsVal - 1)
+            }
+        }
+
+        function update() {
+            var val = $(this).children("option:selected").text();
+            var currentRegularSeatsVal = parseInt($('#regularSeatsLabel').val())
+            var currentBusinessSeatsVal = parseInt($('#businessSeatsLabel').val())
+            if (val == "Regular") {
+                var currentRegularSeatsVal = $('#regularSeatsLabel').val()
+                $('#regularSeatsLabel').val(currentRegularSeatsVal - 1)
+                $('#businessSeatsLabel').val(currentBusinessSeatsVal + 1)
+            }
+            else {
+                $('#regularSeatsLabel').val(currentRegularSeatsVal + 1)
+                $('#businessSeatsLabel').val(currentBusinessSeatsVal - 1)
+            }
+        }
+
+        if(performance.navigation.type == 2) {
+            location.reload(true);
+        }
+        $(".ticketType").each(initial)
+        $('.ticketType').change(update);
+    </script>
 }
+

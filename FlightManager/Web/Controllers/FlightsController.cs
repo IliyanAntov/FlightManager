@@ -155,14 +155,7 @@ namespace Web.Controllers
             }
             else
             {
-                ReserveViewModel model = new ReserveViewModel
-                {
-                    FlightId = createModel.FlightId,
-                    TicketNum = createModel.TicketNum,
-                    AvailableRegularSeats = createModel.RegularSeats,
-                    AvailableBusinessSeats = createModel.BusinessSeats
-                };
-                return RedirectToAction("Reserve", "Reservations", model);
+                return RedirectToAction("Reserve", "Reservations", new { flightid = createModel.FlightId, ticketNum = createModel.TicketNum, availableRegularSeats = createModel.RegularSeats, availableBusinessSeats = createModel.BusinessSeats });
             }
         }
 

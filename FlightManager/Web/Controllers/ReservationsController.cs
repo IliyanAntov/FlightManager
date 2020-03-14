@@ -25,7 +25,6 @@ namespace Web.Controllers
     public class ReservationsController : Controller
     {
 
-        private int PageSize = 10;
         private readonly ApplicationDbContext _context;
 
 
@@ -47,7 +46,7 @@ namespace Web.Controllers
             }
             else
             {
-                flights = _context.Flights.Skip((model.Pager.CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+                flights = _context.Flights.Skip((model.Pager.CurrentPage - 1) * model.Pager.PageSize).Take(model.Pager.PageSize).ToList();
             }
 
             List<ReservationFlightDataViewModel> items = new List<ReservationFlightDataViewModel>();
@@ -95,35 +94,65 @@ namespace Web.Controllers
 
 
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(_context.Flights.Count() / (double)model.Pager.PageSize);
 
             return View(model);
         }
 
-        public ActionResult Reserve(ReserveViewModel model)
+        public ActionResult Reserve(int flightId, int ticketNum, int availableRegularSeats, int availableBusinessSeats)
         {
+            var model = new ReserveViewModel()
+            {
+                FlightId = flightId,
+                TicketNum = ticketNum,
+                AvailableRegularSeats = availableRegularSeats,
+                AvailableBusinessSeats = availableBusinessSeats
+            };
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Confirm(ReserveViewModel createModel)
+        public ActionResult Reserve(ReserveViewModel createModel)
         {
             if (ModelState.IsValid)
             {
-                var regularTicketNum = 0;
-                var businessTicketNum = 0;
+                var requestedRegularTickets = 0;
+                var requestedBusinessTickets = 0;
                 foreach (var passanger in createModel.Passangers)
                 {
                     if (passanger.TicketType == TicketTypeEnum.Regular)
                     {
-                        regularTicketNum++;
+                        requestedRegularTickets++;
                     }
                     else
                     {
-                        businessTicketNum++;
+                        requestedBusinessTickets++;
                     }
                 }
+
+                var flight = _context.Flights.First(x => x.Id == createModel.FlightId);
+                var availableRegularTickets = flight.RegularSeats;
+                var availableBusinessTickets = flight.BusinessSeats;
+                var reservations = _context.Reservations.Include(x => x.Passangers).Where(x => x.FlightId == createModel.FlightId);
+                foreach (var flightReservation in reservations)
+                {
+                    foreach(var flightPassanger in flightReservation.Passangers)
+                    {
+                        if(flightPassanger.TicketType == TicketTypeEnum.Regular)
+                        {
+                            availableRegularTickets--;
+                        }
+                        else{
+                            availableBusinessTickets--;
+                        }
+                    }
+                }
+
+                if((availableRegularTickets - requestedRegularTickets < 0 )||(availableBusinessTickets - requestedBusinessTickets < 0))
+                {
+                    return RedirectToAction("Error", "Home", new { errorMessage = "Not enough seats available" });
+                } 
 
                 Reservation reservation = new Reservation()
                 {
@@ -149,7 +178,22 @@ namespace Web.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Confirmation", "Reservations", new { reservationId = reservation.Id, flightId = createModel.FlightId, email = createModel.Email });
             }
-            return RedirectToAction("UserList", "Flights");
+            else
+            {
+                foreach (var passanger in createModel.Passangers)
+                {
+                    if(passanger.TicketType == TicketTypeEnum.Regular)
+                    {
+                        createModel.AvailableRegularSeats--;
+                    }
+                    else
+                    {
+                        createModel.AvailableBusinessSeats--;
+                    }
+                }
+                return View(createModel);
+            }
+            //return RedirectToAction("Reserve", "Reservations");
         }
 
         public ActionResult Confirmation(int reservationId, int flightId, string email)
@@ -217,8 +261,6 @@ namespace Web.Controllers
             await smtp.SendMailAsync(email);
         }
 
-
-        // GET: Reservations/Details/5
         public ActionResult Details(int reservationId)
         {
             var model = new ReservationDetailsListViewModel();
@@ -247,7 +289,7 @@ namespace Web.Controllers
 
             model.PlaneNum = _context.Flights.FirstOrDefault(x => x.Id == reservation.FlightId).PlaneNumber;
             model.Items = items;
-            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)PageSize);
+            model.Pager.PagesCount = (int)Math.Ceiling(model.Items.Count() / (double)model.Pager.PageSize);
 
             return View(model);
         }

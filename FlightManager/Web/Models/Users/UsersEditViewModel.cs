@@ -38,7 +38,7 @@ namespace Web.Models.Users
 
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [Phone(ErrorMessage = "Please enter a valid phone nubmer")]
+        [RegularExpression(@"^([0-9]{10})$", ErrorMessage = "Please enter a valid phone nubmer")]
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
 

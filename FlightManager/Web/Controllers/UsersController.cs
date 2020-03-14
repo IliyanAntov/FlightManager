@@ -90,7 +90,7 @@ namespace Web.Controllers
             return View(model);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             UsersCreateViewModel model = new UsersCreateViewModel();
@@ -99,6 +99,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(UsersCreateViewModel createModel)
         {
             if (ModelState.IsValid)
@@ -130,7 +131,7 @@ namespace Web.Controllers
             return View(createModel);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(string id)
         {
             ApplicationUser user = _context.Users.Find(id);
@@ -156,6 +157,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(UsersEditViewModel editModel)
         {
             if (ModelState.IsValid)
@@ -192,7 +194,7 @@ namespace Web.Controllers
 
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(string id)
         {
             ApplicationUser user = _userManager.FindByIdAsync(id).Result;
@@ -202,6 +204,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try

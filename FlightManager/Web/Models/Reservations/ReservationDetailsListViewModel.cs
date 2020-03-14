@@ -11,7 +11,7 @@ namespace Web.Models.Reservations
     {
         public PagerViewModel Pager { get; set; }
 
-        public int PlaneNum { get; set; }
+        public long PlaneNum { get; set; }
 
         public ICollection<PassangerDataViewModel> Items { get; set; }
     }

@@ -24,7 +24,7 @@ namespace Web.Models.Users
 
         [Required]
         [DataType(DataType.EmailAddress)]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Please enter a valid Email address")]
         public string Email { get; set; }
 
         [Required]

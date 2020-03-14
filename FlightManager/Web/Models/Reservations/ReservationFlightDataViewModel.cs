@@ -10,7 +10,7 @@ namespace Web.Models.Reservations
     {
         public int Id { get; set; }
 
-        public int PlaneNum { get; set; }
+        public long PlaneNum { get; set; }
 
         public string FlightSource { get; set; }
 

@@ -18,7 +18,7 @@ namespace Data.Entity
 
         public string PlaneType { get; set; }
 
-        public int PlaneNumber { get; set; }
+        public long PlaneNumber { get; set; }
 
         public string PilotName { get; set; }
 

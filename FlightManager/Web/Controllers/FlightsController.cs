@@ -166,7 +166,7 @@ namespace Web.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             FlightCreateViewModel model = new FlightCreateViewModel();
@@ -175,6 +175,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(FlightCreateViewModel createModel)
         {
             if (ModelState.IsValid)
@@ -200,7 +201,7 @@ namespace Web.Controllers
             return View(createModel);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             Flight flight = _context.Flights.Find(id);
@@ -228,6 +229,7 @@ namespace Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(FlightEditViewModel editModel)
         {
             if (ModelState.IsValid)
@@ -259,7 +261,7 @@ namespace Web.Controllers
             return View(editModel);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             Flight flight = _context.Flights.Find(id);

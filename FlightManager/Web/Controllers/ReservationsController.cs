@@ -19,6 +19,7 @@ using Web.Models.Users;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using RazorLight;
 using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -33,7 +34,7 @@ namespace Web.Controllers
             _context = context;
         }
 
-
+        [Authorize(Roles = "Admin,Employee")]
         public ActionResult List(ReservationListViewModel model)
         {
             model.Pager ??= new PagerViewModel();
@@ -254,6 +255,7 @@ namespace Web.Controllers
             await smtp.SendMailAsync(email);
         }
 
+        [Authorize(Roles = "Admin,Employee")]
         public ActionResult Details(int reservationId)
         {
             var model = new ReservationDetailsListViewModel();

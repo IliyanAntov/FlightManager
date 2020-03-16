@@ -245,8 +245,8 @@ namespace Web.Controllers
             var smtp = new SmtpClient();
             var credential = new NetworkCredential
             {
-                UserName = "flightsmanager.iantov@gmail.com",  // replace with valid value
-                Password = "flightsmanager"  // replace with valid value
+                UserName = "flightsmanager.iantov@gmail.com",
+                Password = "flightsmanager"
             };
             smtp.Credentials = credential;
             smtp.Host = "smtp.gmail.com";
